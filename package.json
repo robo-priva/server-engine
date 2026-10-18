@@ -1,0 +1,23 @@
+{
+  "name": "villagecare",
+  "version": "1.0.0",
+  "description": "VillageCare health guidance platform",
+  "main": "Server.js",
+  "scripts": {
+    "start": "node Server.js",
+    "dev": "nodemon Server.js"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.3",
+    "express-rate-limit": "^8.7.1",
+    "express-session": "^1.19.0",
+    "helmet": "^8.3.0",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.10",
+    "supertest": "^7.3.1"
+  }
+}

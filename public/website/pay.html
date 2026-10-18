@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050a18">
+
+    <meta name="description"
+          content="Access VillageCare health guidance through our website payment process.">
+
+    <title>Payment | VillageCare</title>
+
+    <style>
+        :root {
+            --background: #050a18;
+            --card: #0f1933;
+            --card-light: #152242;
+            --primary: #55e6a5;
+            --text: #f4f7ff;
+            --muted: #a8b3cc;
+            --danger: #ff7272;
+            --border: rgba(255,255,255,.10);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, select {
+            font: inherit;
+        }
+
+        .container {
+            width: min(100% - 32px, 680px);
+            margin: 0 auto;
+        }
+
+        header {
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        .back-link {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        main {
+            padding: 38px 0 55px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 26px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border: 1px solid rgba(85,230,165,.3);
+            border-radius: 999px;
+            color: var(--primary);
+            background: rgba(85,230,165,.07);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        h1 {
+            margin: 15px 0 8px;
+            font-size: clamp(28px, 6vw, 38px);
+            line-height: 1.2;
+        }
+
+        .intro p {
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .card {
+            padding: 25px;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: var(--card);
+        }
+
+        .price-card {
+            text-align: center;
+            padding: 28px 20px;
+            border: 1px solid rgba(85,230,165,.25);
+            border-radius: 18px;
+            background: rgba(85,230,165,.05);
+        }
+
+        .price-label {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .price {
+            margin: 8px 0;
+            color: var(--primary);
+            font-size: clamp(36px, 9vw, 48px);
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .price-note {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .field {
+            margin-top: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        select {
+            width: 100%;
+            padding: 13px;
+            color: var(--text);
+            background: var(--background);
+            border: 1px solid #2b3858;
+            border-radius: 12px;
+        }
+
+        select:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .summary {
+            margin-top: 23px;
+            padding: 17px;
+            border-radius: 14px;
+            background: var(--card-light);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            margin: 7px 0;
+            font-size: 14px;
+        }
+
+        .summary-row span:first-child {
+            color: var(--muted);
+        }
+
+        .summary-row strong {
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        .button {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 23px;
+            padding: 15px 18px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: #062015;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .button:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+            margin-top: 18px;
+            padding: 13px 15px;
+            border-radius: 12px;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .message.error {
+            display: block;
+            color: #ffdede;
+            background: rgba(255,114,114,.10);
+            border: 1px solid rgba(255,114,114,.35);
+        }
+
+        .message.info {
+            display: block;
+            color: #d8f8e9;
+            background: rgba(85,230,165,.08);
+            border: 1px solid rgba(85,230,165,.25);
+        }
+
+        .notice {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .notice strong {
+            color: var(--text);
+        }
+
+        .steps {
+            padding-left: 20px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .steps li {
+            margin: 8px 0;
+        }
+
+        .help {
+            margin-top: 24px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        footer {
+            padding: 22px 0;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: min(100% - 22px, 680px);
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            main {
+                padding-top: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container header-inner">
+            <a class="brand" href="/">Village<span>Care</span></a>
+            <a class="back-link" href="/">← Home</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="intro">
+            <span class="badge">SECURE PAYMENT PROCESS</span>
+            <h1>Continue with VillageCare</h1>
+            <p>
+                Review the consultation price before proceeding.
+            </p>
+        </section>
+
+        <section class="card">
+            <div class="price-card">
+                <div class="price-label">Health guidance consultation</div>
+
+                <div class="price" id="displayPrice">500 XAF</div>
+
+                <div class="price-note">
+                    One consultation · No hidden charges from VillageCare
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="currency">Choose your payment currency</label>
+
+                <select id="currency">
+                    <option value="XAF">XAF — Central African CFA franc</option>
+                    <option value="USD">USD — US dollar</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="language">Preferred language</label>
+
+                <select id="language">
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="pidgin">Cameroonian Pidgin</option>
+                </select>
+            </div>
+
+            <div class="summary">
+                <div class="summary-row">
+                    <span>Service</span>
+                    <strong>VillageCare health guidance</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Currency</span>
+                    <strong id="summaryCurrency">XAF</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Total</span>
+                    <strong id="summaryTotal">500 XAF</strong>
+                </div>
+            </div>
+
+            <div id="paymentMessage"
+                 class="message"
+                 role="alert"
+                 aria-live="polite"></div>
+
+            <button id="payButton" class="button" type="button">
+                Continue to payment
+            </button>
+
+            <div class="notice">
+                <strong>Payment safety</strong>
+                <p>
+                    Payment confirmation must come from the VillageCare
+                    server after it verifies the transaction with the
+                    payment provider. A payment redirect or screenshot
+                    alone does not confirm payment.
+                </p>
+            </div>
+
+            <h2 style="font-size:18px;margin-top:25px;">
+                What happens next?
+            </h2>
+
+            <ol class="steps">
+                <li>Review the price and selected currency.</li>
+                <li>Proceed to the payment provider when checkout is configured.</li>
+                <li>Wait for the server to verify the payment.</li>
+                <li>Continue only when the server confirms your access.</li>
+            </ol>
+        </section>
+
+        <div class="help">
+            Never share your banking PIN, password, or payment verification
+            code with anyone claiming to represent VillageCare.
+            <br><br>
+            <a href="/">Return to homepage</a>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            © <span id="year"></span> VillageCare
+        </div>
+    </footer>
+
+    <script>
+        "use strict";
+
+        const currencySelect = document.getElementById("currency");
+        const languageSelect = document.getElementById("language");
+        const displayPrice = document.getElementById("displayPrice");
+        const summaryCurrency = document.getElementById("summaryCurrency");
+        const summaryTotal = document.getElementById("summaryTotal");
+        const payButton = document.getElementById("payButton");
+        const paymentMessage = document.getElementById("paymentMessage");
+
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        /*
+         * These prices are for display only.
+         * The backend must determine and validate the actual amount
+         * and currency before creating any payment request.
+         *
+         * USD is a configured price, not a live currency conversion.
+         */
+        const prices = {
+            XAF: 500,
+            USD: 1
+        };
+
+        function updatePrice() {
+            const currency = currencySelect.value;
+            const amount = prices[currency];
+
+            displayPrice.textContent = amount + " " + currency;
+            summaryCurrency.textContent = currency;
+            summaryTotal.textContent = amount + " " + currency;
+        }
+
+        function showMessage(message, type) {
+            paymentMessage.textContent = message;
+            paymentMessage.className = "message " + type;
+        }
+
+        function clearMessage() {
+            paymentMessage.textContent = "";
+            paymentMessage.className = "message";
+        }
+
+        currencySelect.addEventListener("change", updatePrice);
+
+        payButton.addEventListener("click", async function () {
+            clearMessage();
+
+            /*
+             * The payment API is currently a placeholder in Server.js.
+             * Do not open a fake checkout or claim payment has succeeded.
+             */
+            payButton.disabled = true;
+            payButton.textContent = "Checking payment service…";
+
+            try {
+                const response = await fetch("/api/pay", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify({
+                        currency: currencySelect.value,
+                        language: languageSelect.value
+                    })
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok || data.success !== true) {
+                    throw new Error(
+                        typeof data.error === "string"
+                            ? data.error
+                            : "Online payment is not available yet. Please try again later."
+                    );
+                }
+
+                /*
+                 * The future backend should return a trusted checkout URL.
+                 * Only allow HTTPS checkout URLs from approved payment
+                 * provider domains after implementing server-side checks.
+                 */
+                let checkoutUrl;
+
+                try {
+                    checkoutUrl = new URL(data.checkoutUrl);
+                } catch {
+                    throw new Error(
+                        "The payment service returned an invalid checkout address."
+                    );
+                }
+
+                const allowedHosts = [
+                    "checkout.flutterwave.com"
+                ];
+
+                if (
+                    checkoutUrl.protocol !== "https:" ||
+                    !allowedHosts.includes(checkoutUrl.hostname)
+                ) {
+                    throw new Error(
+                        "The payment service returned an unapproved checkout address."
+                    );
+                }
+
+                window.location.assign(checkoutUrl.href);
+            } catch (error) {
+                showMessage(
+                    error.message ||
+                    "We could not contact the payment service. Check your internet connection and try again.",
+                    "error"
+                );
+            } finally {
+                payButton.disabled = false;
+                payButton.textContent = "Continue to payment";
+            }
+        });
+
+        updatePrice();
+    </script>
+</body>
+</html>

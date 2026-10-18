@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#050a18">
+    <meta name="description"
+          content="VillageCare provides health information and guidance to help you decide your next steps.">
+
+    <title>Health Assessment | VillageCare</title>
+
+    <style>
+        :root {
+            --background: #050a18;
+            --card: #0f1933;
+            --card-light: #152242;
+            --primary: #55e6a5;
+            --text: #f4f7ff;
+            --muted: #a8b3cc;
+            --danger: #ff7272;
+            --border: rgba(255,255,255,.10);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(100% - 32px, 760px);
+            margin: 0 auto;
+        }
+
+        header {
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        .back-link {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        main {
+            padding: 32px 0 50px;
+        }
+
+        .intro {
+            margin-bottom: 24px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border: 1px solid rgba(85,230,165,.3);
+            border-radius: 999px;
+            color: var(--primary);
+            background: rgba(85,230,165,.07);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        h1 {
+            margin: 15px 0 8px;
+            font-size: clamp(28px, 6vw, 40px);
+            line-height: 1.2;
+        }
+
+        .intro p {
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .emergency {
+            padding: 17px;
+            margin-bottom: 22px;
+            border: 1px solid rgba(255,114,114,.4);
+            border-radius: 16px;
+            background: rgba(255,114,114,.08);
+        }
+
+        .emergency h2 {
+            margin: 0 0 6px;
+            color: var(--danger);
+            font-size: 17px;
+        }
+
+        .emergency p {
+            margin: 0;
+            color: #f2dada;
+            font-size: 14px;
+        }
+
+        .card {
+            padding: 23px;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: var(--card);
+        }
+
+        .card h2 {
+            margin: 0 0 5px;
+            font-size: 21px;
+        }
+
+        .card-description {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .field {
+            margin-bottom: 19px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .required {
+            color: var(--primary);
+        }
+
+        input, select, textarea {
+            display: block;
+            width: 100%;
+            padding: 13px 14px;
+            color: var(--text);
+            background: var(--background);
+            border: 1px solid #2b3858;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(85,230,165,.10);
+        }
+
+        textarea {
+            min-height: 145px;
+            resize: vertical;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #75819b;
+        }
+
+        .hint {
+            display: block;
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .consent {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 19px 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .consent input {
+            width: 18px;
+            height: 18px;
+            margin-top: 3px;
+            flex-shrink: 0;
+            accent-color: var(--primary);
+        }
+
+        .button {
+            width: 100%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: #062015;
+            font-weight: 800;
+            cursor: pointer;
+            transition: opacity .2s;
+        }
+
+        .button:hover {
+            opacity: .9;
+        }
+
+        .button:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .disclaimer {
+            margin: 18px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .message {
+            display: none;
+            margin-bottom: 18px;
+            padding: 13px 15px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .message.error {
+            display: block;
+            color: #ffdede;
+            background: rgba(255,114,114,.10);
+            border: 1px solid rgba(255,114,114,.35);
+        }
+
+        .message.info {
+            display: block;
+            color: #d8f8e9;
+            background: rgba(85,230,165,.08);
+            border: 1px solid rgba(85,230,165,.25);
+        }
+
+        .result {
+            display: none;
+            margin-top: 24px;
+        }
+
+        .result h2 {
+            margin-top: 0;
+        }
+
+        .result-content {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            color: var(--text);
+        }
+
+        .result-warning {
+            margin-top: 18px;
+            padding: 13px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.04);
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .result-actions {
+            margin-top: 18px;
+        }
+
+        .secondary-button {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            background: var(--card-light);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        footer {
+            padding: 22px 0;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: min(100% - 22px, 760px);
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            main {
+                padding-top: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container header-inner">
+            <a class="brand" href="/">Village<span>Care</span></a>
+            <a class="back-link" href="/">← Back to home</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="intro">
+            <span class="badge">HEALTH GUIDANCE</span>
+            <h1>Let's understand how you're feeling.</h1>
+            <p>
+                Tell us about your symptoms to receive general health
+                information and guidance on possible next steps.
+            </p>
+        </section>
+
+        <section class="emergency" aria-labelledby="emergencyTitle">
+            <h2 id="emergencyTitle">⚠️ Need urgent medical help?</h2>
+            <p>
+                Do not wait for this online assessment if someone has
+                severe difficulty breathing, becomes unconscious, has
+                heavy bleeding, experiences a seizure, or develops
+                sudden weakness or difficulty speaking. Seek emergency
+                medical care immediately or ask a nearby health worker
+                for urgent help.
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>Health assessment</h2>
+            <p class="card-description">
+                Complete the required fields below. Please do not enter
+                your name, address, phone number, or other identifying details.
+            </p>
+
+            <div id="formMessage"
+                 class="message"
+                 role="alert"
+                 aria-live="polite"></div>
+
+            <form id="triageForm">
+                <div class="field">
+                    <label for="language">
+                        Preferred language <span class="required">*</span>
+                    </label>
+                    <select id="language" name="language" required>
+                        <option value="en">English</option>
+                        <option value="fr">Français</option>
+                        <option value="pidgin">Cameroonian Pidgin</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="age">
+                        Age in years <span class="required">*</span>
+                    </label>
+                    <input
+                        id="age"
+                        name="age"
+                        type="number"
+                        min="0"
+                        max="120"
+                        step="1"
+                        inputmode="numeric"
+                        placeholder="Enter age"
+                        required
+                    >
+                    <span class="hint">
+                        For a baby younger than one year, enter 0 and
+                        mention the age in months in the symptom description.
+                    </span>
+                </div>
+
+                <div class="field">
+                    <label for="symptoms">
+                        What symptoms are you experiencing?
+                        <span class="required">*</span>
+                    </label>
+
+                    <textarea
+                        id="symptoms"
+                        name="symptoms"
+                        minlength="5"
+                        maxlength="2000"
+                        placeholder="Describe what you are feeling, when it started, and whether it is getting better or worse..."
+                        required
+                    ></textarea>
+
+                    <span class="hint">
+                        Between 5 and 2,000 characters. Avoid including
+                        names or identifying information.
+                    </span>
+                </div>
+
+                <label class="consent" for="privacyConsent">
+                    <input
+                        id="privacyConsent"
+                        name="privacyConsent"
+                        type="checkbox"
+                        required
+                    >
+                    <span>
+                        I understand that this service provides general
+                        health information, not a diagnosis, and that my
+                        description will be sent to the VillageCare server
+                        to process this request.
+                    </span>
+                </label>
+
+                <button class="button" id="submitButton" type="submit">
+                    Get health guidance →
+                </button>
+
+                <p class="disclaimer">
+                    VillageCare does not replace a doctor or qualified
+                    health worker. Never delay urgent medical care while
+                    using this service.
+                </p>
+            </form>
+        </section>
+
+        <section id="resultSection" class="card result" aria-live="polite">
+            <h2>Your health guidance</h2>
+
+            <div id="resultContent" class="result-content"></div>
+
+            <div class="result-warning">
+                This information is not a diagnosis and may not identify
+                every serious condition. A qualified health worker should
+                assess concerning, persistent, or worsening symptoms.
+            </div>
+
+            <div class="result-actions">
+                <button type="button" class="button" id="newAssessment">
+                    Start a new assessment
+                </button>
+
+                <a class="secondary-button" href="/">
+                    Return to homepage
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            © <span id="year"></span> VillageCare.
+            Health information, not a substitute for professional care.
+        </div>
+    </footer>
+
+    <script>
+        "use strict";
+
+        const form = document.getElementById("triageForm");
+        const formMessage = document.getElementById("formMessage");
+        const submitButton = document.getElementById("submitButton");
+        const resultSection = document.getElementById("resultSection");
+        const resultContent = document.getElementById("resultContent");
+
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        function showMessage(message, type) {
+            formMessage.textContent = message;
+            formMessage.className = "message " + type;
+        }
+
+        function clearMessage() {
+            formMessage.textContent = "";
+            formMessage.className = "message";
+        }
+
+        function getErrorMessage(data) {
+            if (data && typeof data.error === "string") {
+                return data.error;
+            }
+
+            return "We could not process your request. Please try again later.";
+        }
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            clearMessage();
+
+            const language = document.getElementById("language").value;
+            const ageInput = document.getElementById("age").value;
+            const symptoms = document.getElementById("symptoms").value.trim();
+            const consent = document.getElementById("privacyConsent").checked;
+
+            const age = Number(ageInput);
+
+            if (ageInput === "" || !Number.isInteger(age) || age < 0 || age > 120) {
+                showMessage("Please enter a valid age between 0 and 120.", "error");
+                return;
+            }
+
+            if (symptoms.length < 5 || symptoms.length > 2000) {
+                showMessage("Please describe your symptoms using 5 to 2,000 characters.", "error");
+                return;
+            }
+
+            if (!consent) {
+                showMessage("Please confirm that you understand how this service works.", "error");
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Processing your request…";
+
+            showMessage(
+                "Sending your request securely. If symptoms are severe, seek urgent medical care instead of waiting.",
+                "info"
+            );
+
+            resultSection.style.display = "none";
+
+            try {
+                const response = await fetch("/api/triage", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify({
+                        age: age,
+                        symptoms: symptoms,
+                        language: language
+                    })
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok || data.success !== true) {
+                    throw new Error(getErrorMessage(data));
+                }
+
+                /*
+                 * Render the response as plain text, never as HTML.
+                 * This prevents backend/user-provided content from being
+                 * interpreted as executable markup.
+                 */
+                const guidance =
+                    typeof data.guidance === "string"
+                        ? data.guidance
+                        : typeof data.message === "string"
+                            ? data.message
+                            : "";
+
+                if (!guidance.trim()) {
+                    throw new Error(
+                        "The server returned no guidance. Please try again later."
+                    );
+                }
+
+                resultContent.textContent = guidance;
+                resultSection.style.display = "block";
+                clearMessage();
+
+                resultSection.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            } catch (error) {
+                showMessage(
+                    error.message ||
+                    "We could not connect to VillageCare. Please check your connection and try again.",
+                    "error"
+                );
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = "Get health guidance →";
+            }
+        });
+
+        document.getElementById("newAssessment").addEventListener("click", function () {
+            form.reset();
+            resultSection.style.display = "none";
+            clearMessage();
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050a18">
+
+    <meta name="description"
+          content="Check your VillageCare payment verification status.">
+
+    <title>Payment Status | VillageCare</title>
+
+    <style>
+        :root {
+            --background: #050a18;
+            --card: #0f1933;
+            --card-light: #152242;
+            --primary: #55e6a5;
+            --text: #f4f7ff;
+            --muted: #a8b3cc;
+            --danger: #ff7272;
+            --warning: #ffce72;
+            --border: rgba(255,255,255,.10);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(100% - 32px, 650px);
+            margin: 0 auto;
+        }
+
+        header {
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        .back-link {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        main {
+            flex: 1;
+            display: grid;
+            place-items: center;
+            padding: 35px 0 45px;
+        }
+
+        .card {
+            width: 100%;
+            padding: 30px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: var(--card);
+            text-align: center;
+        }
+
+        .status-icon {
+            width: 76px;
+            height: 76px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: var(--card-light);
+            font-size: 36px;
+        }
+
+        .status-icon.success {
+            color: var(--primary);
+            background: rgba(85,230,165,.10);
+        }
+
+        .status-icon.pending {
+            color: var(--warning);
+            background: rgba(255,206,114,.10);
+        }
+
+        .status-icon.failed {
+            color: var(--danger);
+            background: rgba(255,114,114,.10);
+        }
+
+        .status-icon.checking {
+            color: var(--muted);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        h1 {
+            margin: 16px 0 8px;
+            font-size: clamp(27px, 6vw, 36px);
+            line-height: 1.2;
+        }
+
+        .description {
+            max-width: 470px;
+            margin: 0 auto;
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .details {
+            margin-top: 25px;
+            padding: 17px;
+            border-radius: 14px;
+            background: var(--card-light);
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 7px 0;
+            font-size: 13px;
+        }
+
+        .detail-row span:first-child {
+            color: var(--muted);
+        }
+
+        .detail-row strong {
+            max-width: 65%;
+            text-align: right;
+            overflow-wrap: anywhere;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 13px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 22px;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: #062015;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .button:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--card-light);
+            color: var(--text);
+            text-align: center;
+        }
+
+        .small-note {
+            margin-top: 20px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        footer {
+            padding: 22px 0;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: min(100% - 22px, 650px);
+            }
+
+            .card {
+                padding: 22px 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container header-inner">
+            <a class="brand" href="/">Village<span>Care</span></a>
+            <a class="back-link" href="/">Home</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="card" aria-labelledby="statusTitle">
+
+            <div id="statusIcon" class="status-icon checking"
+                 aria-hidden="true">⏳</div>
+
+            <span id="statusBadge" class="badge">
+                CHECKING PAYMENT
+            </span>
+
+            <h1 id="statusTitle">Verifying your payment</h1>
+
+            <p id="statusDescription" class="description" aria-live="polite">
+                Please wait while VillageCare checks the transaction with
+                the server. Do not make another payment while verification
+                is in progress.
+            </p>
+
+            <div class="details">
+                <div class="detail-row">
+                    <span>Transaction reference</span>
+                    <strong id="transactionReference">Not available</strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Verification status</span>
+                    <strong id="transactionStatus">Checking…</strong>
+                </div>
+            </div>
+
+            <div id="statusMessage" class="message" aria-live="polite">
+                Contacting the VillageCare server…
+            </div>
+
+            <button id="retryButton" class="button" type="button" hidden>
+                Check payment again
+            </button>
+
+            <a id="continueButton" class="button"
+               href="/triage.html" hidden>
+                Continue to health assessment
+            </a>
+
+            <a id="homeButton" class="secondary-button" href="/">
+                Return to homepage
+            </a>
+
+            <p class="small-note">
+                Payment confirmation is determined by the server.
+                This page alone cannot confirm a payment or grant access.
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            © <span id="year"></span> VillageCare
+        </div>
+    </footer>
+
+    <script>
+        "use strict";
+
+        const statusIcon = document.getElementById("statusIcon");
+        const statusBadge = document.getElementById("statusBadge");
+        const statusTitle = document.getElementById("statusTitle");
+        const statusDescription = document.getElementById("statusDescription");
+        const transactionReference = document.getElementById("transactionReference");
+        const transactionStatus = document.getElementById("transactionStatus");
+        const statusMessage = document.getElementById("statusMessage");
+        const retryButton = document.getElementById("retryButton");
+        const continueButton = document.getElementById("continueButton");
+
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        /*
+         * The browser never decides whether payment succeeded.
+         * The backend must verify the transaction independently.
+         *
+         * This frontend expects the future verification endpoint to return:
+         *
+         * {
+         *   "success": true,
+         *   "status": "successful",
+         *   "verified": true,
+         *   "accessGranted": true
+         * }
+         *
+         * The endpoint currently returns HTTP 501 in Server.js.
+         */
+
+        const params = new URLSearchParams(window.location.search);
+
+        const txRef =
+            params.get("tx_ref") ||
+            params.get("transaction_id") ||
+            "";
+
+        /*
+         * A provider transaction ID is NOT proof of payment.
+         * Only tx_ref is sent to our backend for lookup.
+         */
+        transactionReference.textContent = txRef || "Not available";
+
+        let checking = false;
+
+        function setStatus(type, title, description, message) {
+            const icons = {
+                success: "✓",
+                pending: "⏳",
+                failed: "✕",
+                checking: "⏳"
+            };
+
+            const badges = {
+                success: "PAYMENT VERIFIED",
+                pending: "VERIFICATION PENDING",
+                failed: "PAYMENT NOT CONFIRMED",
+                checking: "CHECKING PAYMENT"
+            };
+
+            statusIcon.className = "status-icon " + type;
+            statusIcon.textContent = icons[type] || icons.checking;
+
+            statusBadge.textContent = badges[type] || badges.checking;
+            statusTitle.textContent = title;
+            statusDescription.textContent = description;
+            statusMessage.textContent = message;
+
+            transactionStatus.textContent = badges[type] || "Unknown";
+
+            continueButton.hidden = true;
+            retryButton.hidden = true;
+
+            if (type === "success") {
+                /*
+                 * This button appears only if the server explicitly confirms
+                 * both verification and access authorization.
+                 */
+                continueButton.hidden = false;
+            } else if (type === "pending" || type === "failed") {
+                retryButton.hidden = false;
+            }
+        }
+
+        async function verifyPayment() {
+            if (checking) return;
+
+            if (!txRef) {
+                setStatus(
+                    "pending",
+                    "No transaction reference",
+                    "We could not find a transaction reference in this page address.",
+                    "If you completed a payment, return to the payment provider's confirmation process or contact support. Do not pay again until you check your transaction."
+                );
+
+                return;
+            }
+
+            checking = true;
+            retryButton.disabled = true;
+            retryButton.textContent = "Checking…";
+
+            setStatus(
+                "checking",
+                "Verifying your payment",
+                "The server is checking the transaction. This can take a short time.",
+                "Contacting the VillageCare server…"
+            );
+
+            try {
+                const response = await fetch(
+                    "/api/verify/" + encodeURIComponent(txRef),
+                    {
+                        method: "GET",
+                        headers: {
+                            "Accept": "application/json"
+                        },
+                        credentials: "same-origin",
+                        cache: "no-store"
+                    }
+                );
+
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok) {
+                    if (response.status === 501 || response.status === 503) {
+                        throw new Error(
+                            "Payment verification is not configured yet. No payment has been confirmed by VillageCare."
+                        );
+                    }
+
+                    throw new Error(
+                        typeof data.error === "string"
+                            ? data.error
+                            : "The server could not verify this transaction."
+                    );
+                }
+
+                /*
+                 * Require explicit server confirmation.
+                 * Never treat a URL parameter or provider redirect alone
+                 * as a successful payment.
+                 */
+                if (
+                    data.success === true &&
+                    data.verified === true &&
+                    data.accessGranted === true &&
+                    data.status === "successful"
+                ) {
+                    setStatus(
+                        "success",
+                        "Payment confirmed",
+                        "The server has verified your transaction.",
+                        "Your access has been confirmed. You can continue to the health assessment."
+                    );
+                } else if (
+                    data.status === "pending" ||
+                    data.status === "processing"
+                ) {
+                    setStatus(
+                        "pending",
+                        "Payment is still being checked",
+                        "The transaction has not yet been confirmed. Please wait before trying again.",
+                        "Your payment status is pending. This page does not grant access until the server confirms it."
+                    );
+                } else {
+                    setStatus(
+                        "failed",
+                        "Payment not confirmed",
+                        "VillageCare could not confirm successful payment for this transaction.",
+                        "Check your transaction status with the payment provider before attempting another payment."
+                    );
+                }
+            } catch (error) {
+                setStatus(
+                    "pending",
+                    "Unable to verify right now",
+                    "We could not complete the verification request.",
+                    error.message ||
+                    "Please check your internet connection and try again."
+                );
+
+                retryButton.hidden = false;
+            } finally {
+                checking = false;
+                retryButton.disabled = false;
+                retryButton.textContent = "Check payment again";
+            }
+        }
+
+        retryButton.addEventListener("click", verifyPayment);
+
+        verifyPayment();
+    </script>
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#050a18">
+    <meta name="description" content="VillageCare provides accessible AI-assisted health guidance in English, French and Pidgin.">
+
+    <title>VillageCare — Health Guidance for Everyone</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --background: #050a18;
+            --card: #0f1933;
+            --card-light: #142142;
+            --primary: #55e6a5;
+            --primary-dark: #20bd80;
+            --text: #f5f7ff;
+            --muted: #a2aec9;
+            --border: rgba(255,255,255,.09);
+            --danger: #ff6b75;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(ellipse at 50% 0%, #10234a 0%, transparent 48%),
+                var(--background);
+            color: var(--text);
+            font-family: Inter, Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        button, select, a {
+            font: inherit;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(100% - 36px, 1080px);
+            margin: auto;
+        }
+
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -.7px;
+        }
+
+        .brand-icon {
+            display: grid;
+            place-items: center;
+            width: 43px;
+            height: 43px;
+            border-radius: 15px;
+            background: var(--primary);
+            color: #06251a;
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .brand span small {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 1.7px;
+            text-transform: uppercase;
+        }
+
+        .language-select {
+            max-width: 125px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            outline: none;
+            background: var(--card);
+            color: white;
+        }
+
+        main {
+            padding: 55px 0 35px;
+        }
+
+        .hero {
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 13px;
+            border: 1px solid rgba(85,230,165,.2);
+            border-radius: 100px;
+            background: rgba(85,230,165,.07);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .hero h1 {
+            max-width: 760px;
+            margin: 24px auto 18px;
+            font-size: clamp(36px, 8vw, 65px);
+            font-weight: 800;
+            letter-spacing: -2.5px;
+            line-height: 1.12;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero-description {
+            max-width: 580px;
+            margin: auto;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 390px;
+            margin: 30px auto 15px;
+        }
+
+        .button {
+            display: inline-flex;
+            min-height: 55px;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 22px;
+            border: 0;
+            border-radius: 17px;
+            cursor: pointer;
+            font-weight: 800;
+            transition: transform .2s, background .2s;
+        }
+
+        .button:active {
+            transform: scale(.98);
+        }
+
+        .button-primary {
+            background: var(--primary);
+            color: #052519;
+            box-shadow: 0 8px 30px rgba(85,230,165,.12);
+        }
+
+        .button-primary:hover {
+            background: #7af0bc;
+        }
+
+        .button-secondary {
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: white;
+        }
+
+        .price-note {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .price-note strong {
+            color: var(--primary);
+        }
+
+        .hero-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 38px auto;
+        }
+
+        .health-orb {
+            display: grid;
+            position: relative;
+            place-items: center;
+            width: 155px;
+            height: 155px;
+            border: 1px solid rgba(85,230,165,.25);
+            border-radius: 50%;
+            background: radial-gradient(circle, #193d48, #0f1933 70%);
+            box-shadow: 0 0 80px rgba(85,230,165,.1);
+        }
+
+        .health-orb .cross {
+            color: var(--primary);
+            font-size: 76px;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .orb-label {
+            position: absolute;
+            bottom: 25px;
+            color: #d5fbea;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .section-heading {
+            margin: 48px 0 22px;
+            text-align: center;
+        }
+
+        .section-heading h2 {
+            font-size: 25px;
+            letter-spacing: -.7px;
+        }
+
+        .section-heading p {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .feature-card {
+            padding: 24px;
+            border: 1px solid var(--border);
+            border-radius: 26px;
+            background: linear-gradient(145deg, var(--card), #0b142b);
+        }
+
+        .feature-icon {
+            display: grid;
+            place-items: center;
+            width: 48px;
+            height: 48px;
+            margin-bottom: 18px;
+            border-radius: 16px;
+            background: var(--card-light);
+            font-size: 23px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 8px;
+            font-size: 17px;
+        }
+
+        .feature-card p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .price-card {
+            margin: 28px 0;
+            padding: 27px;
+            border: 1px solid rgba(85,230,165,.2);
+            border-radius: 26px;
+            background: linear-gradient(135deg, #10283a, #0f1933);
+            text-align: center;
+        }
+
+        .price-card .price {
+            margin: 10px 0;
+            color: var(--primary);
+            font-size: 39px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        .price-card p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .emergency {
+            margin: 28px 0;
+            padding: 21px;
+            border: 1px solid rgba(255,107,117,.25);
+            border-radius: 22px;
+            background: rgba(255,107,117,.07);
+        }
+
+        .emergency h3 {
+            margin-bottom: 8px;
+            color: var(--danger);
+            font-size: 16px;
+        }
+
+        .emergency p {
+            color: #e4d7df;
+            font-size: 13px;
+        }
+
+        .disclaimer {
+            margin: 24px 0;
+            padding: 17px;
+            border-radius: 16px;
+            background: rgba(255,255,255,.035);
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        footer {
+            padding: 28px 0;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        footer p + p {
+            margin-top: 7px;
+        }
+
+        @media (min-width: 650px) {
+            main {
+                padding-top: 80px;
+            }
+
+            .hero-actions {
+                flex-direction: row;
+                max-width: 460px;
+            }
+
+            .hero-actions .button {
+                flex: 1;
+            }
+
+            .features {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .feature-card {
+                padding: 25px 20px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="container nav">
+        <a href="/" class="brand" aria-label="VillageCare home">
+            <div class="brand-icon">+</div>
+            <span>
+                VillageCare
+                <small data-i18n="brandTag">Health guidance for everyone</small>
+            </span>
+        </a>
+
+        <select id="language" class="language-select" aria-label="Choose language">
+            <option value="en">🇬🇧 English</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="pidgin">🇨🇲 Pidgin</option>
+        </select>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <div class="badge">
+            <span>●</span>
+            <span data-i18n="badge">HEALTH GUIDANCE, CLOSER TO YOU</span>
+        </div>
+
+        <h1 data-i18n="headline">
+            Your health matters.<br>
+            <span>Help starts here.</span>
+        </h1>
+
+        <p class="hero-description" data-i18n="description">
+            Answer simple questions about how you feel and get guidance
+            on what to do next, even when a doctor is far away.
+        </p>
+
+        <div class="hero-actions">
+            <a href="/triage.html" class="button button-primary" data-i18n="start">
+                Start health check →
+            </a>
+
+            <a href="#how-it-works" class="button button-secondary" data-i18n="learn">
+                Learn more
+            </a>
+        </div>
+
+        <p class="price-note" data-i18n="priceNote">
+            Primary consultation: <strong>500 XAF</strong>
+        </p>
+
+        <div class="hero-visual" aria-hidden="true">
+            <div class="health-orb">
+                <div class="cross">+</div>
+                <div class="orb-label">VILLAGECARE</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works">
+        <div class="section-heading">
+            <h2 data-i18n="featuresTitle">Simple. Accessible. Caring.</h2>
+            <p data-i18n="featuresSubtitle">
+                Health guidance designed with communities in mind.
+            </p>
+        </div>
+
+        <div class="features">
+            <article class="feature-card">
+                <div class="feature-icon" aria-hidden="true">💬</div>
+                <h3 data-i18n="feature1Title">Tell us how you feel</h3>
+                <p data-i18n="feature1Text">
+                    Describe your symptoms and answer questions in your
+                    preferred language.
+                </p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon" aria-hidden="true">🧭</div>
+                <h3 data-i18n="feature2Title">Understand your next step</h3>
+                <p data-i18n="feature2Text">
+                    Receive cautious guidance about seeking urgent,
+                    same-day or routine medical care.
+                </p>
+            </article>
+
+            <article class="feature-card">
+                <div class="feature-icon" aria-hidden="true">🤝</div>
+                <h3 data-i18n="feature3Title">Connect with care</h3>
+                <p data-i18n="feature3Text">
+                    Use the guidance to help you decide when to contact
+                    a qualified health worker.
+                </p>
+            </article>
+        </div>
+    </section>
+
+    <section class="price-card">
+        <h2 data-i18n="priceTitle">Affordable health guidance</h2>
+
+        <div class="price">500 XAF</div>
+
+        <p data-i18n="priceDescription">
+            Proposed price for one primary triage consultation.
+            Payment is required only when the service is available.
+        </p>
+    </section>
+
+    <section class="emergency" role="alert">
+        <h3 data-i18n="emergencyTitle">🚨 Medical emergency?</h3>
+
+        <p data-i18n="emergencyText">
+            Do not wait for an online consultation if someone has
+            difficulty breathing, severe chest pain, heavy bleeding,
+            seizures or becomes unconscious. Seek emergency medical
+            help immediately or go to the nearest health facility.
+        </p>
+    </section>
+
+    <div class="disclaimer" data-i18n="disclaimer">
+        VillageCare provides AI-assisted guidance only. It does not
+        diagnose illnesses, replace a doctor, or guarantee that a
+        condition is safe to manage at home. Consult a qualified
+        health worker for medical advice.
+    </div>
+
+</main>
+
+<footer>
+    <div class="container">
+        <p>© <span id="year"></span> VillageCare</p>
+        <p data-i18n="footer">Built to bring health guidance closer to communities.</p>
+    </div>
+</footer>
+
+<script>
+"use strict";
+
+const translations = {
+    en: {
+        brandTag: "Health guidance for everyone",
+        badge: "HEALTH GUIDANCE, CLOSER TO YOU",
+        headline: 'Your health matters.<br><span>Help starts here.</span>',
+        description: "Answer simple questions about how you feel and get guidance on what to do next, even when a doctor is far away.",
+        start: "Start health check →",
+        learn: "Learn more",
+        priceNote: "Primary consultation: <strong>500 XAF</strong>",
+        featuresTitle: "Simple. Accessible. Caring.",
+        featuresSubtitle: "Health guidance designed with communities in mind.",
+        feature1Title: "Tell us how you feel",
+        feature1Text: "Describe your symptoms and answer questions in your preferred language.",
+        feature2Title: "Understand your next step",
+        feature2Text: "Receive cautious guidance about seeking urgent, same-day or routine medical care.",
+        feature3Title: "Connect with care",
+        feature3Text: "Use the guidance to help you decide when to contact a qualified health worker.",
+        priceTitle: "Affordable health guidance",
+        priceDescription: "Proposed price for one primary triage consultation. Payment is required only when the service is available.",
+        emergencyTitle: "🚨 Medical emergency?",
+        emergencyText: "Do not wait for an online consultation if someone has difficulty breathing, severe chest pain, heavy bleeding, seizures or becomes unconscious. Seek emergency medical help immediately or go to the nearest health facility.",
+        disclaimer: "VillageCare provides AI-assisted guidance only. It does not diagnose illnesses, replace a doctor, or guarantee that a condition is safe to manage at home. Consult a qualified health worker for medical advice.",
+        footer: "Built to bring health guidance closer to communities."
+    },
+
+    fr: {
+        brandTag: "Des conseils de santé pour tous",
+        badge: "DES CONSEILS DE SANTÉ, PLUS PRÈS DE VOUS",
+        headline: "Votre santé compte.<br><span>L'aide commence ici.</span>",
+        description: "Répondez à quelques questions sur votre état de santé et recevez des conseils sur les prochaines étapes, même si un médecin est loin.",
+        start: "Commencer →",
+        learn: "En savoir plus",
+        priceNote: "Consultation initiale : <strong>500 XAF</strong>",
+        featuresTitle: "Simple. Accessible. Bienveillant.",
+        featuresSubtitle: "Des conseils de santé adaptés aux communautés.",
+        feature1Title: "Décrivez vos symptômes",
+        feature1Text: "Décrivez vos symptômes et répondez aux questions dans la langue de votre choix.",
+        feature2Title: "Comprenez la prochaine étape",
+        feature2Text: "Recevez des conseils prudents sur le recours aux soins urgents, le jour même ou habituels.",
+        feature3Title: "Accédez aux soins",
+        feature3Text: "Utilisez ces conseils pour savoir quand contacter un professionnel de santé.",
+        priceTitle: "Des conseils de santé abordables",
+        priceDescription: "Prix proposé pour une consultation initiale de triage. Le paiement ne sera demandé que lorsque le service sera disponible.",
+        emergencyTitle: "🚨 Urgence médicale ?",
+        emergencyText: "N'attendez pas une consultation en ligne en cas de difficulté respiratoire, douleur thoracique intense, saignement abondant, convulsions ou perte de connaissance. Cherchez immédiatement une aide médicale d'urgence ou rendez-vous au centre de santé le plus proche.",
+        disclaimer: "VillageCare fournit uniquement des conseils assistés par l'IA. Le service ne pose pas de diagnostic et ne remplace pas un médecin. Consultez un professionnel de santé qualifié.",
+        footer: "Pour rapprocher les conseils de santé des communautés."
+    },
+
+    pidgin: {
+        brandTag: "Health guidance for everybody",
+        badge: "HEALTH HELP WEY DEY NEAR YOU",
+        headline: "Your health na important.<br><span>Help fit start here.</span>",
+        description: "Answer small questions about how your body dey feel. Get guidance about wetin you fit do next, even when doctor dey far.",
+        start: "Start health check →",
+        learn: "Learn more",
+        priceNote: "One first consultation: <strong>500 XAF</strong>",
+        featuresTitle: "Simple. Easy. We care.",
+        featuresSubtitle: "Health guidance wey think about our communities.",
+        feature1Title: "Tell us how you dey feel",
+        feature1Text: "Explain your symptoms and answer questions for the language wey you prefer.",
+        feature2Title: "Know wetin to do next",
+        feature2Text: "Get careful guidance about when you need urgent or normal medical care.",
+        feature3Title: "Find proper care",
+        feature3Text: "Use the guidance to know when you need to contact trained health worker.",
+        priceTitle: "Health guidance wey no cost too much",
+        priceDescription: "Proposed price for one first triage consultation. Payment go only happen when the service dey available.",
+        emergencyTitle: "🚨 Medical emergency?",
+        emergencyText: "No wait for online consultation if person dey struggle to breathe, get serious chest pain, bleed plenty, get convulsion, or no wake up. Find emergency medical help now or go the nearest health centre.",
+        disclaimer: "VillageCare na AI health guidance only. E no be diagnosis, e no replace doctor, and e no fit promise say e safe to treat sickness for house. Talk to trained health worker for medical advice.",
+        footer: "We dey work to bring health guidance closer to communities."
+    }
+};
+
+const languageSelect = document.getElementById("language");
+
+function setLanguage(language) {
+    const dictionary = translations[language] || translations.en;
+
+    document.documentElement.lang = language === "pidgin" ? "en" : language;
+
+    document.querySelectorAll("[data-i18n]").forEach(element => {
+        const key = element.dataset.i18n;
+
+        if (dictionary[key] !== undefined) {
+            // These translations contain only developer-authored static HTML.
+            element.innerHTML = dictionary[key];
+        }
+    });
+
+    languageSelect.value = language;
+
+    try {
+        localStorage.setItem("villagecare-language", language);
+    } catch (_) {
+        // The page still works when browser storage is unavailable.
+    }
+}
+
+languageSelect.addEventListener("change", event => {
+    setLanguage(event.target.value);
+});
+
+let savedLanguage = "en";
+
+try {
+    savedLanguage = localStorage.getItem("villagecare-language") || "en";
+} catch (_) {
+    // Use English if storage is unavailable.
+}
+
+setLanguage(savedLanguage);
+
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

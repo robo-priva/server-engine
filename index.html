@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#050a18">
+
+    <title>VillageCare | Health Companion</title>
+
+    <style>
+        :root {
+            --background: #050a18;
+            --card: #0f1933;
+            --card-light: #152242;
+            --primary: #55e6a5;
+            --text: #f4f7ff;
+            --muted: #a8b3cc;
+            --danger: #ff7272;
+            --warning: #ffce72;
+            --border: rgba(255,255,255,.10);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding-bottom: calc(85px + env(safe-area-inset-bottom));
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        button, a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(100% - 24px, 650px);
+            margin: 0 auto;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            padding: 15px 0;
+            background: rgba(5,10,24,.96);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+        }
+
+        .topbar-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        .connection {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: var(--warning);
+        }
+
+        .connection-dot.online {
+            background: var(--primary);
+        }
+
+        .connection-dot.offline {
+            background: var(--danger);
+        }
+
+        main {
+            padding-top: 24px;
+        }
+
+        .welcome {
+            margin-bottom: 22px;
+        }
+
+        .eyebrow {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            margin: 7px 0;
+            font-size: clamp(27px, 7vw, 35px);
+            line-height: 1.2;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .welcome p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .emergency {
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,114,114,.35);
+            border-radius: 17px;
+            background: rgba(255,114,114,.07);
+        }
+
+        .emergency h2 {
+            margin: 0 0 5px;
+            color: var(--danger);
+            font-size: 16px;
+        }
+
+        .emergency p {
+            margin: 0;
+            color: #f1dada;
+            font-size: 12px;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0 12px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .card {
+            padding: 19px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+            border-radius: 19px;
+            background: var(--card);
+        }
+
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            border-color: rgba(85,230,165,.22);
+            background:
+                linear-gradient(145deg, rgba(85,230,165,.09), transparent 70%),
+                var(--card);
+        }
+
+        .hero-icon {
+            display: grid;
+            place-items: center;
+            width: 49px;
+            height: 49px;
+            margin-bottom: 13px;
+            border-radius: 15px;
+            background: rgba(85,230,165,.12);
+            font-size: 25px;
+        }
+
+        .hero-card h2 {
+            margin: 0 0 6px;
+            font-size: 21px;
+        }
+
+        .hero-card p {
+            margin: 0 0 17px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 13px 16px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: #062015;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .button:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--card-light);
+            color: var(--text);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .feature-card {
+            min-width: 0;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--card);
+        }
+
+        .feature-icon {
+            font-size: 24px;
+        }
+
+        .feature-card h3 {
+            margin: 7px 0 4px;
+            font-size: 14px;
+        }
+
+        .feature-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input, select, textarea {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #2b3858;
+            border-radius: 11px;
+            outline: none;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        textarea {
+            min-height: 125px;
+            resize: vertical;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #75819b;
+        }
+
+        .hint {
+            display: block;
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .message {
+            display: none;
+            padding: 12px;
+            margin-bottom: 14px;
+            border-radius: 11px;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .message.info {
+            display: block;
+            color: #d8f8e9;
+            background: rgba(85,230,165,.08);
+            border: 1px solid rgba(85,230,165,.25);
+        }
+
+        .message.error {
+            display: block;
+            color: #ffdede;
+            background: rgba(255,114,114,.10);
+            border: 1px solid rgba(255,114,114,.35);
+        }
+
+        .message.warning {
+            display: block;
+            color: #ffebc2;
+            background: rgba(255,206,114,.08);
+            border: 1px solid rgba(255,206,114,.25);
+        }
+
+        .result-card {
+            display: none;
+        }
+
+        .result-text {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-size: 14px;
+        }
+
+        .consent {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            margin: 15px 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .consent input {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            margin-top: 3px;
+            accent-color: var(--primary);
+        }
+
+        .notice {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .status-panel {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .status-icon {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            border-radius: 13px;
+            background: var(--card-light);
+            font-size: 21px;
+        }
+
+        .status-panel h3 {
+            margin: 0 0 4px;
+            font-size: 15px;
+        }
+
+        .status-panel p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 20;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+            border-top: 1px solid var(--border);
+            background: rgba(5,10,24,.98);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 4px;
+            border: none;
+            background: transparent;
+            color: var(--muted);
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .nav-item span {
+            font-size: 20px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        footer {
+            padding: 20px 0;
+            color: var(--muted);
+            font-size: 11px;
+            text-align: center;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        @media (max-width: 360px) {
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="container topbar-inner">
+            <a class="brand" href="#home">Village<span>Care</span></a>
+
+            <div class="connection" aria-live="polite">
+                <span id="connectionDot" class="connection-dot"></span>
+                <span id="connectionText">Checking connection</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- HOME -->
+        <section id="homeSection">
+            <div class="welcome">
+                <div class="eyebrow">YOUR HEALTH COMPANION</div>
+                <h1 id="welcomeTitle">Hello 👋</h1>
+                <p id="welcomeDescription" class="muted">
+                    Health information and guidance, wherever you are.
+                </p>
+            </div>
+
+            <section class="emergency">
+                <h2>⚠️ Emergency warning</h2>
+                <p>
+                    If someone has severe difficulty breathing, becomes
+                    unconscious, has heavy bleeding, experiences a seizure,
+                    or develops sudden weakness or difficulty speaking,
+                    seek emergency medical care immediately. Do not wait
+                    for this app to respond.
+                </p>
+            </section>
+
+            <section class="card hero-card">
+                <div class="hero-icon">🩺</div>
+                <h2>How are you feeling today?</h2>
+                <p>
+                    Describe your symptoms to request general health
+                    information and guidance on possible next steps.
+                </p>
+
+                <button class="button" type="button" data-go="assessment">
+                    Start health assessment →
+                </button>
+            </section>
+
+            <div class="section-title">
+                <h2>Your health tools</h2>
+            </div>
+
+            <div class="feature-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Local languages</h3>
+                    <p>Choose English, French, or Cameroonian Pidgin.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privacy awareness</h3>
+                    <p>Avoid entering names or other identifying details.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3>Health guidance</h3>
+                    <p>Receive information when the service is available.</p>
+                </article>
+
+                <article class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Know when to seek care</h3>
+                    <p>Concerning or worsening symptoms need professional assessment.</p>
+                </article>
+            </div>
+
+            <div class="section-title">
+                <h2>Service status</h2>
+            </div>
+
+            <section class="card">
+                <div class="status-panel">
+                    <div class="status-icon">ℹ️</div>
+                    <div>
+                        <h3 id="serviceStatusTitle">Checking service</h3>
+                        <p id="serviceStatusDescription">
+                            Checking whether the VillageCare server is reachable.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- ASSESSMENT -->
+        <section id="assessmentSection" hidden>
+            <div class="section-title">
+                <h2>🩺 Health assessment</h2>
+            </div>
+
+            <section class="card">
+                <p class="muted" style="font-size:13px;margin-top:0;">
+                    Describe your symptoms without including your name,
+                    address, phone number, or other identifying details.
+                </p>
+
+                <div id="assessmentMessage"
+                     class="message"
+                     role="alert"
+                     aria-live="polite"></div>
+
+                <form id="assessmentForm">
+                    <div class="field">
+                        <label for="language">Preferred language *</label>
+
+                        <select id="language" required>
+                            <option value="en">English</option>
+                            <option value="fr">Français</option>
+                            <option value="pidgin">Cameroonian Pidgin</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="age">Age in years *</label>
+
+                        <input
+                            id="age"
+                            type="number"
+                            min="0"
+                            max="120"
+                            step="1"
+                            inputmode="numeric"
+                            placeholder="Enter age"
+                            required
+                        >
+
+                        <span class="hint">
+                            For a baby younger than one year, enter 0 and
+                            mention the age in months in the description.
+                        </span>
+                    </div>
+
+                    <div class="field">
+                        <label for="symptoms">Describe your symptoms *</label>
+
+                        <textarea
+                            id="symptoms"
+                            minlength="5"
+                            maxlength="2000"
+                            placeholder="What are you feeling? When did it start?"
+                            required
+                        ></textarea>
+
+                        <span class="hint">
+                            Enter between 5 and 2,000 characters.
+                        </span>
+                    </div>
+
+                    <label class="consent" for="privacyConsent">
+                        <input id="privacyConsent" type="checkbox" required>
+
+                        <span>
+                            I understand that this service provides general
+                            health information, not a diagnosis, and that
+                            my description will be sent to the server.
+                        </span>
+                    </label>
+
+                    <button id="assessmentButton" class="button" type="submit">
+                        Request health guidance
+                    </button>
+
+                    <p class="notice">
+                        Do not delay emergency care while using this service.
+                    </p>
+                </form>
+            </section>
+
+            <section id="resultCard" class="card result-card" aria-live="polite">
+                <h2 style="font-size:19px;">Your health guidance</h2>
+
+                <div id="resultText" class="result-text"></div>
+
+                <p class="notice">
+                    This information is not a diagnosis. Seek assessment
+                    from a qualified health worker for concerning,
+                    persistent, or worsening symptoms.
+                </p>
+
+                <button id="newAssessmentButton"
+                        class="secondary-button"
+                        type="button">
+                    Start a new assessment
+                </button>
+            </section>
+        </section>
+
+        <!-- ACCESS STATUS -->
+        <section id="accessSection" hidden>
+            <div class="section-title">
+                <h2>🔐 Access status</h2>
+            </div>
+
+            <section class="card">
+                <p class="muted" style="font-size:13px;margin-top:0;">
+                    Check the service status through the VillageCare server.
+                    This page will not ask you for payment details.
+                </p>
+
+                <div id="accessMessage"
+                     class="message"
+                     role="status"
+                     aria-live="polite">
+                    Access checking is not connected yet.
+                </div>
+
+                <button id="checkAccessButton" class="button" type="button">
+                    Check access status
+                </button>
+
+                <p class="notice">
+                    Access status requires a secure server-side account
+                    and payment verification system. Never share payment
+                    PINs or passwords in this app.
+                </p>
+            </section>
+        </section>
+
+        <footer>
+            VillageCare · Health information, not a medical diagnosis.
+            <br>
+            © <span id="year"></span> VillageCare
+        </footer>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+        <button class="nav-item active" type="button" data-go="home">
+            <span>🏠</span>
+            <strong>Home</strong>
+        </button>
+
+        <button class="nav-item" type="button" data-go="assessment">
+            <span>🩺</span>
+            <strong>Assessment</strong>
+        </button>
+
+        <button class="nav-item" type="button" data-go="access">
+            <span>🔐</span>
+            <strong>Access</strong>
+        </button>
+    </nav>
+
+    <script>
+        "use strict";
+
+        const sections = {
+            home: document.getElementById("homeSection"),
+            assessment: document.getElementById("assessmentSection"),
+            access: document.getElementById("accessSection")
+        };
+
+        const navItems = document.querySelectorAll(".nav-item");
+        const assessmentForm = document.getElementById("assessmentForm");
+        const assessmentMessage = document.getElementById("assessmentMessage");
+        const assessmentButton = document.getElementById("assessmentButton");
+        const resultCard = document.getElementById("resultCard");
+        const resultText = document.getElementById("resultText");
+        const accessMessage = document.getElementById("accessMessage");
+
+        document.getElementById("year").textContent =
+            new Date().getFullYear();
+
+        function navigateTo(name) {
+            if (!sections[name]) return;
+
+            for (const [sectionName, section] of Object.entries(sections)) {
+                section.hidden = sectionName !== name;
+            }
+
+            navItems.forEach(function (item) {
+                item.classList.toggle("active", item.dataset.go === name);
+            });
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        document.querySelectorAll("[data-go]").forEach(function (element) {
+            element.addEventListener("click", function () {
+                navigateTo(element.dataset.go);
+            });
+        });
+
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = "message " + type;
+        }
+
+        function clearMessage(element) {
+            element.textContent = "";
+            element.className = "message";
+        }
+
+        async function checkServer() {
+            const dot = document.getElementById("connectionDot");
+            const connectionText = document.getElementById("connectionText");
+            const serviceTitle = document.getElementById("serviceStatusTitle");
+            const serviceDescription = document.getElementById("serviceStatusDescription");
+
+            if (!navigator.onLine) {
+                dot.className = "connection-dot offline";
+                connectionText.textContent = "Offline";
+
+                serviceTitle.textContent = "No internet connection";
+                serviceDescription.textContent =
+                    "Connect to the internet to contact the VillageCare server.";
+
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/health", {
+                    method: "GET",
+                    headers: { "Accept": "application/json" },
+                    credentials: "same-origin",
+                    cache: "no-store"
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || data.success !== true) {
+                    throw new Error("Service unavailable");
+                }
+
+                dot.className = "connection-dot online";
+                connectionText.textContent = "Connected";
+
+                serviceTitle.textContent = "Server reachable";
+                serviceDescription.textContent =
+                    "The VillageCare server responded. Some services may still be under development.";
+            } catch {
+                dot.className = "connection-dot offline";
+                connectionText.textContent = "Unavailable";
+
+                serviceTitle.textContent = "Service unavailable";
+                serviceDescription.textContent =
+                    "We could not contact the server. Check your connection and try again.";
+            }
+        }
+
+        window.addEventListener("online", checkServer);
+
+        window.addEventListener("offline", function () {
+            document.getElementById("connectionDot").className =
+                "connection-dot offline";
+
+            document.getElementById("connectionText").textContent = "Offline";
+        });
+
+        assessmentForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            clearMessage(assessmentMessage);
+
+            const ageValue = document.getElementById("age").value;
+            const age = Number(ageValue);
+            const symptoms = document.getElementById("symptoms").value.trim();
+            const language = document.getElementById("language").value;
+            const consent = document.getElementById("privacyConsent").checked;
+
+            if (
+                ageValue === "" ||
+                !Number.isInteger(age) ||
+                age < 0 ||
+                age > 120
+            ) {
+                showMessage(
+                    assessmentMessage,
+                    "Please enter a valid age between 0 and 120.",
+                    "error"
+                );
+                return;
+            }
+
+            if (symptoms.length < 5 || symptoms.length > 2000) {
+                showMessage(
+                    assessmentMessage,
+                    "Please describe your symptoms using 5 to 2,000 characters.",
+                    "error"
+                );
+                return;
+            }
+
+            if (!consent) {
+                showMessage(
+                    assessmentMessage,
+                    "Please confirm that you understand how this service works.",
+                    "error"
+                );
+                return;
+            }
+
+            assessmentButton.disabled = true;
+            assessmentButton.textContent = "Sending request…";
+            resultCard.style.display = "none";
+
+            showMessage(
+                assessmentMessage,
+                "Contacting VillageCare. If symptoms are severe, seek urgent care rather than waiting.",
+                "info"
+            );
+
+            try {
+                const response = await fetch("/api/triage", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify({
+                        age: age,
+                        symptoms: symptoms,
+                        language: language
+                    })
+                });
+
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok || data.success !== true) {
+                    throw new Error(
+                        typeof data.error === "string"
+                            ? data.error
+                            : "Health guidance is not available yet."
+                    );
+                }
+
+                const guidance =
+                    typeof data.guidance === "string"
+                        ? data.guidance
+                        : typeof data.message === "string"
+                            ? data.message
+                            : "";
+
+                if (!guidance.trim()) {
+                    throw new Error("The server returned no health guidance.");
+                }
+
+                resultText.textContent = guidance;
+                resultCard.style.display = "block";
+                clearMessage(assessmentMessage);
+
+                resultCard.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            } catch (error) {
+                showMessage(
+                    assessmentMessage,
+                    error.message ||
+                    "Could not connect to VillageCare. Please try again later.",
+                    "error"
+                );
+            } finally {
+                assessmentButton.disabled = false;
+                assessmentButton.textContent = "Request health guidance";
+            }
+        });
+
+        document.getElementById("newAssessmentButton")
+            .addEventListener("click", function () {
+                assessmentForm.reset();
+                resultCard.style.display = "none";
+                clearMessage(assessmentMessage);
+
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+
+        document.getElementById("checkAccessButton")
+            .addEventListener("click", async function () {
+                showMessage(
+                    accessMessage,
+                    "Secure account and access-status checking have not been implemented yet. No payment status can be confirmed here.",
+                    "warning"
+                );
+            });
+
+        checkServer();
+    </script>
+</body>
+</html>
