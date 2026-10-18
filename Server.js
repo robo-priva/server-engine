@@ -6,8 +6,13 @@ const express = require("express");
 const path = require("path");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const session = require("express-session");
 const fs = require("fs");
+
+const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
+const { getDatabase } = require("./config/database");
+
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,22 +47,58 @@ const apiLimiter = rateLimit({
 app.use("/api", apiLimiter);
 
 // Session configuration
+
+// =====================================================
+// SESSION CONFIGURATION
+// =====================================================
+
 if (process.env.NODE_ENV === "production") {
     app.set("trust proxy", 1);
 }
 
-app.use(session({
+const sessionOptions = {
     name: "villagecare.sid",
-    secret: process.env.SESSION_SECRET || "development-only-change-this-secret",
+
+    secret: process.env.SESSION_SECRET ||
+        (process.env.NODE_ENV === "production"
+            ? (() => {
+                throw new Error(
+                    "SESSION_SECRET must be configured in production."
+                );
+            })()
+            : "development-only-change-this-secret"),
+
     resave: false,
     saveUninitialized: false,
+
     cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         maxAge: 30 * 60 * 1000
     }
-}));
+};
+
+// Use PostgreSQL sessions when DATABASE_URL is configured.
+// Keep the default memory store for local development/tests.
+if (process.env.DATABASE_URL) {
+    sessionOptions.store = new pgSession({
+        pool: getDatabase(),
+        tableName: "user_sessions",
+        createTableIfMissing: true,
+        pruneSessionInterval: 15 * 60
+    });
+
+    console.log("VillageCare sessions: PostgreSQL");
+} else {
+    console.log("VillageCare sessions: local memory store");
+}
+
+app.use(session(sessionOptions));
+
+
+
+
 
 // =====================================================
 // JSON DATA FILES
@@ -101,7 +142,37 @@ app.use("/app", express.static(
 // API ROUTES
 // =====================================================
 
+
+// Authentication routes
+app.use("/api/auth", require("./routes/authRoutes"));
+
 // Health check
+
+
+app.get("/api/health", async (req, res) => {
+    try {
+        const { testDatabaseConnection } = require("./config/database");
+        const database = await testDatabaseConnection();
+
+        return res.json({
+            success: true,
+            service: "VillageCare",
+            status: "running",
+            database: "connected",
+            databaseTime: database.database_time
+        });
+    } catch (error) {
+        console.error("Database health check failed:", error.message);
+
+        return res.status(503).json({
+            success: false,
+            service: "VillageCare",
+            status: "running",
+            database: "disconnected",
+            error: "Database connection unavailable."
+        });
+    }
+});
 app.get("/api/health", (req, res) => {
     res.json({
         success: true,
@@ -115,8 +186,7 @@ app.get("/api/health", (req, res) => {
 // Real medical triage logic will be added separately.
 app.post("/api/triage", (req, res) => {
     return res.status(501).json({
-        success: false,
-        error: "Triage is not available yet.",
+        success: false,        error: "Triage is not available yet.",
         disclaimer: "This is AI guidance only, not a doctor. Consult a health worker."
     });
 });
